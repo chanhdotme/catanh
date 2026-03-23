@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Công cụ tạo ảnh thẻ 3×4 · 4×6 trực tuyến</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+
+/* ================================================================
+   CSS VARIABLES
+================================================================ */
+:root {
+  --blue:         #1565c0;
+  --blue-mid:     #1976d2;
+  --blue-light:   #e3f0ff;
+  --green:        #2e7d32;
+  --orange:       #e65100;
+  --orange-light: #fff3e0;
+  --gray-bg:      #f4f6fa;
+  --border:       #d0d7e3;
+  --text:         #1a2236;
+  --text-muted:   #5a6a85;
+  --white:        #ffffff;
+  --shadow:       0 2px 12px rgba(21,101,192,.10);
+  --radius:       10px;
+}
+
+/* ================================================================
+   RESET & BASE
+================================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--gray-bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ================================================================
+   HEADER
+================================================================ */
+.header {
+  background: var(--white);
+  border-bottom: 2px solid var(--blue);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  position: sticky; top: 0; z-index: 100;
+}
+.header-logo { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.logo-circle {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg,#1565c0 60%,#0d47a1);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #fff; font-weight: 700;
+  text-align: center; line-height: 1.2; flex-shrink: 0;
+  border: 2px solid #bbdefb;
+}
+.header-title { min-width: 0; }
+.header-title h1 {
+  font-size: 12.5px; font-weight: 700; color: var(--blue); line-height: 1.3;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.header-title p { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+.header-badge {
+  background: var(--blue-light); color: var(--blue); border: 1px solid #90caf9;
+  border-radius: 20px; padding: 4px 12px; font-size: 11.5px; font-weight: 600;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* ================================================================
+   PAGE TITLE BANNER
+================================================================ */
+.page-title-wrap {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 16px 20px 14px;
+}
+.page-title-wrap h2 { font-size: 20px; font-weight: 700; color: var(--blue); line-height: 1.3; }
+.page-title-wrap > p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  border-radius: 20px; padding: 3px 11px; font-size: 11.5px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.badge-blue   { background: #e3f2fd; color: var(--blue-mid); border: 1px solid #90caf9; }
+.badge-green  { background: #e8f5e9; color: var(--green);    border: 1px solid #a5d6a7; }
+.badge-orange { background: #fff3e0; color: var(--orange);   border: 1px solid #ffcc80; }
+
+/* ================================================================
+   MAIN LAYOUT
+================================================================ */
+.main {
+  max-width: 1120px; margin: 22px auto 0;
+  padding: 0 20px 48px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; align-items: start;
+}
+
+/* ================================================================
+   CARD
+================================================================ */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 20px 18px 16px;
+  box-shadow: var(--shadow);
+}
+.card + .card { margin-top: 18px; }
+.card-title {
+  font-size: 14.5px; font-weight: 700; color: var(--blue);
+  margin-bottom: 14px; padding-bottom: 10px;
+  border-bottom: 2px solid var(--blue-light);
+  display: flex; align-items: center; gap: 8px;
+}
+.step-num {
+  background: var(--blue); color: #fff; border-radius: 50%;
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ================================================================
+   FORM ELEMENTS
+================================================================ */
+label.field-label {
+  display: block; font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 6px; margin-top: 14px;
+}
+.hint { font-size: 11.5px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
+
+.file-input-wrap {
+  display: flex; align-items: center; gap: 10px;
+  border: 1.5px dashed var(--blue-mid); border-radius: 8px;
+  padding: 10px 14px; background: var(--blue-light); cursor: pointer;
+  transition: background .2s, border-color .2s; min-height: 48px;
+}
+.file-input-wrap:hover { background: #c8e6fb; border-color: var(--blue); }
+.file-input-wrap input[type="file"] { display: none; }
+.file-btn {
+  background: var(--blue-mid); color: #fff; border: none;
+  border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0; font-family: inherit;
+}
+#file-name { font-size: 12.5px; color: var(--text-muted); word-break: break-all; }
+
+.radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.radio-label {
+  display: flex; align-items: center; gap: 6px;
+  border: 1.5px solid var(--border); border-radius: 8px; padding: 7px 13px;
+  cursor: pointer; transition: border .15s, background .15s;
+  font-size: 13px; font-weight: 500; background: #f8fafd; user-select: none;
+}
+.radio-label:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+.radio-label input[type="radio"] { accent-color: var(--blue-mid); }
+.radio-label.selected { border-color: var(--blue-mid); background: var(--blue-light); color: var(--blue); }
+
+.custom-size-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.custom-size-row input {
+  width: 64px; padding: 7px 8px; border: 1.5px solid var(--border);
+  border-radius: 6px; font-size: 13px; text-align: center; font-family: inherit; color: var(--text);
+}
+.custom-size-row span { font-size: 13px; color: var(--text-muted); }
+
+input[type="number"], input[type="text"] {
+  padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: 13px; font-family: inherit; color: var(--text); width: 100%;
+  transition: border .15s;
+}
+input[type="number"]:focus, input[type="text"]:focus { outline: none; border-color: var(--blue-mid); }
+.dpi-row { display: flex; align-items: center; gap: 10px; }
+.dpi-row input[type="number"] { width: 90px; }
+
+.zoom-row { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+input[type="range"] { flex: 1; accent-color: var(--blue-mid); cursor: pointer; height: 4px; }
+#zoom-val { min-width: 42px; font-size: 13px; font-weight: 600; color: var(--blue); text-align: right; }
+
+/* ================================================================
+   BUTTONS
+================================================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  border: none; border-radius: 8px; padding: 10px 20px;
+  cursor: pointer; font-size: 13.5px; font-weight: 600; font-family: inherit;
+  transition: all .18s; white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.btn-primary  { background: var(--blue-mid); color: #fff; }
+.btn-primary:hover  { background: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(25,118,210,.25); }
+.btn-secondary{ background: #eceff1; color: #455a64; border: 1.5px solid #cfd8dc; }
+.btn-secondary:hover{ background: #cfd8dc; }
+.btn-green    { background: var(--green); color: #fff; }
+.btn-green:hover    { background: #1b5e20; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(46,125,50,.25); }
+.btn-orange   { background: #ef6c00; color: #fff; }
+.btn-orange:hover   { background: var(--orange); transform: translateY(-1px); }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+/* ================================================================
+   PREVIEW
+================================================================ */
+.preview-area {
+  width: 100%; min-height: 240px;
+  background: repeating-conic-gradient(#e0e6f0 0% 25%,#f0f4fb 0% 50%) 0 0/16px 16px;
+  border-radius: 8px; border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative; cursor: grab; touch-action: none;
+}
+.preview-area.active { cursor: grabbing; }
+.preview-area canvas { display: block; max-width: 100%; max-height: 380px; border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,.15); }
+.preview-placeholder { color: #9aabb5; font-size: 13px; text-align: center; padding: 32px 20px; line-height: 1.8; }
+.preview-tip { font-size: 11.5px; color: var(--text-muted); margin-top: 8px; }
+
+/* ================================================================
+   INFO BOXES
+================================================================ */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.info-box { border-radius: 8px; padding: 14px 14px 12px; }
+.info-box.blue   { background: var(--blue-light);   border: 1px solid #90caf9; }
+.info-box.orange { background: var(--orange-light); border: 1px solid #ffcc80; }
+.info-box h4 { font-size: 12.5px; font-weight: 700; margin-bottom: 7px; }
+.info-box.blue h4   { color: var(--blue); }
+.info-box.orange h4 { color: var(--orange); }
+.info-box ul { padding-left: 16px; }
+.info-box ul li { font-size: 12px; color: var(--text); margin-bottom: 4px; line-height: 1.5; }
+
+/* ================================================================
+   FOOTER
+================================================================ */
+footer {
+  background: var(--white); border-top: 2px solid var(--blue-light);
+  text-align: center; padding: 18px 20px; margin-top: 10px;
+}
+.footer-logo {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin-bottom: 8px; flex-wrap: wrap;
+}
+.footer-logo .logo-circle { width: 38px; height: 38px; font-size: 9px; }
+footer p { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; }
+footer .counter { color: var(--blue); font-weight: 600; }
+
+/* ================================================================
+   UI OVERLAYS
+================================================================ */
+#loading-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(21,101,192,.15); z-index: 999;
+  align-items: center; justify-content: center;
+}
+#loading-overlay.show { display: flex; }
+.spinner {
+  width: 44px; height: 44px; border: 4px solid #bbdefb;
+  border-top-color: var(--blue-mid); border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: #1e293b; color: #fff; border-radius: 8px;
+  padding: 10px 22px; font-size: 13px; z-index: 9999;
+  max-width: 90vw; text-align: center;
+  transition: transform .3s, opacity .3s; opacity: 0; pointer-events: none;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+#scroll-top {
+  display: none; position: fixed; bottom: 70px; right: 18px;
+  width: 42px; height: 42px; background: var(--blue-mid); color: #fff;
+  border-radius: 50%; border: none; font-size: 18px; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0,0,0,.2); z-index: 200;
+  align-items: center; justify-content: center; transition: opacity .2s;
+}
+#scroll-top.show { display: flex; }
+
+/* ================================================================
+   ██ RESPONSIVE ██
+   Breakpoints:
+     Desktop  : ≥ 901px   (2-column grid, full header)
+     Tablet   : 601–900px (1-column, some condensing)
+     Mobile   : ≤ 600px   (1-column, full-width buttons, stacked)
+     Tiny     : ≤ 380px   (further font / padding reduction)
+================================================================ */
+
+/* ── TABLET  601px – 900px ─────────────────────────────────── */
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+    padding: 0 14px 40px;
+    gap: 0;
+    margin-top: 16px;
+  }
+  .col-left  { order: 1; }
+  .col-right { order: 2; margin-top: 16px; }
+
+  .header-title p { display: none; }
+  .header-badge   { font-size: 11px; padding: 4px 10px; }
+
+  .page-title-wrap h2 { font-size: 18px; }
+
+  .card { padding: 18px 16px 14px; }
+
+  .info-grid { grid-template-columns: 1fr 1fr; }
+
+  .preview-area canvas { max-height: 340px; }
+}
+
+/* ── MOBILE  ≤ 600px ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Sticky header condensed */
+  .header { padding: 8px 12px; gap: 8px; }
+  .logo-circle { width: 38px; height: 38px; font-size: 8.5px; }
+  .header-title h1 { font-size: 10.5px; }
+  .header-badge { display: none; }
+
+  /* Page title */
+  .page-title-wrap { padding: 12px 12px 10px; }
+  .page-title-wrap h2 { font-size: 15.5px; }
+  .page-title-wrap > p { font-size: 11.5px; }
+  .badge { font-size: 10.5px; padding: 3px 8px; }
+
+  /* Main */
+  .main { padding: 0 10px 28px; }
+
+  /* Card */
+  .card { padding: 15px 12px 12px; border-radius: 9px; }
+  .col-right { margin-top: 12px; }
+  .card + .card { margin-top: 12px; }
+
+  .card-title { font-size: 13px; padding-bottom: 8px; margin-bottom: 11px; }
+  label.field-label { font-size: 12.5px; margin-top: 12px; }
+  .hint { font-size: 11px; }
+
+  /* File upload */
+  .file-input-wrap { padding: 11px 12px; min-height: 50px; }
+  .file-btn { padding: 9px 15px; font-size: 13px; }
+
+  /* Radio */
+  .radio-group { gap: 7px; }
+  .radio-label { font-size: 12.5px; padding: 8px 11px; }
+
+  /* DPI */
+  .dpi-row input[type="number"] { width: 75px; }
+
+  /* BUTTONS: full width stacked */
+  .btn-row { flex-direction: column; gap: 9px; }
+  .btn     { width: 100%; padding: 12px 14px; font-size: 13.5px; }
+
+  /* Preview */
+  .preview-area { min-height: 190px; }
+  .preview-area canvas { max-height: 280px; }
+  .preview-placeholder { font-size: 12px; padding: 22px 14px; }
+  .preview-tip { font-size: 11px; }
+
+  /* Info boxes: stack */
+  .info-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Footer */
+  .footer-logo { flex-direction: column; gap: 8px; }
+  .footer-logo div { text-align: center; }
+  footer p { font-size: 11px; }
+}
+
+/* ── TINY  ≤ 380px ─────────────────────────────────────────── */
+@media (max-width: 380px) {
+  .header-title h1 { font-size: 9.5px; max-width: 160px; }
+  .page-title-wrap h2 { font-size: 14px; }
+  .card-title { font-size: 12.5px; }
+  .radio-label { font-size: 12px; padding: 7px 9px; }
+  .btn { font-size: 13px; padding: 11px 12px; }
+  .badge { display: none; }
+  .badge:first-child { display: inline-flex; }
+}
+
+/* ── LARGE DESKTOP  ≥ 1100px ───────────────────────────────── */
+@media (min-width: 1100px) {
+  .main { gap: 26px; padding: 0 24px 52px; }
+  .card { padding: 26px 24px 20px; }
+  .card-title { font-size: 15px; }
+  .header-title h1 { font-size: 13.5px; }
+  .header-title p  { font-size: 11.5px; }
+  .page-title-wrap h2 { font-size: 22px; }
+  .btn { font-size: 14px; padding: 11px 22px; }
+  .preview-area canvas { max-height: 420px; }
+  label.field-label { font-size: 13.5px; }
+}
+
+/* ── PRINT ─────────────────────────────────────────────────── */
+@media print {
+  .header,.page-title-wrap,.badges,.btn,.btn-row,
+  #scroll-top,#loading-overlay,#toast { display: none !important; }
+  .main { grid-template-columns: 1fr; gap: 0; }
+  .card { box-shadow: none; border: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════  HEADER  ══════════ -->
+<header class="header">
+  <div class="header-logo">
+    <div class="logo-circle">Crop<br>tool</div>
+    <div class="header-title">
+      <h1>catanh.chanh.me</h1>
+      <p>Cắt ảnh</p>
+    </div>
+  </div>
+  <div class="header-badge">v1.16.03.2026</div>
+</header>
+
+<!-- ══════════  TITLE BANNER  ══════════ -->
+<div class="page-title-wrap">
+  <h2>Công cụ tạo ảnh thẻ 3×4 · 4×6 trực tuyến</h2>
+  <p>Công cụ cho người dùng cắt ảnh thẻ đúng chuẩn để thực hiện các thủ tục liên quan đến giấy khám sức khỏe, cấp đổi Giấy phép lái xe, dịch vụ công, khám chữa bệnh,...Để dễ nhớ hơn, mình đã tạo công cụ này. Trang gốc: <a href="https://suckhoequangninh.vn/anh-the/">Tại đây</a>
+</p>
+  <div class="badges">
+    <span class="badge badge-blue">Cắt ảnh</span>
+    <span class="badge badge-green">catanh.chanh.me</span>
+    <span class="badge badge-orange">🔒 Không lưu trữ ảnh trên máy chủ · Xử lý trực tiếp trên trình duyệt</span>
+  </div>
+</div>
+
+<!-- ══════════  MAIN  ══════════ -->
+<div class="main">
+
+  <!-- LEFT / STEP 1 -->
+  <div class="col-left">
+    <div class="card">
+      <div class="card-title"><span class="step-num">1</span> Tải ảnh &amp; thiết lập thông số</div>
+
+      <label class="field-label">Chọn ảnh gốc (JPG, PNG...)</label>
+      <div class="file-input-wrap" id="file-drop" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" accept="image/*">
+        <button class="file-btn" type="button">📁 Chọn File</button>
+        <span id="file-name">Chưa chọn file</span>
+      </div>
+
+      <label class="field-label">Kích thước ảnh thẻ</label>
+      <div class="radio-group" id="size-group">
+        <label class="radio-label selected" id="lbl-3x4">
+          <input type="radio" name="size" value="3x4" checked> 3 × 4 cm
+        </label>
+        <label class="radio-label" id="lbl-4x6">
+          <input type="radio" name="size" value="4x6"> 4 × 6 cm
+        </label>
+        <label class="radio-label" id="lbl-custom">
+          <input type="radio" name="size" value="custom"> Tùy chỉnh
+        </label>
+      </div>
+      <div class="custom-size-row" id="custom-row" style="display:none;">
+        <input type="number" id="custom-w" min="1" max="20" step="0.1" value="3" placeholder="Rộng">
+        <span>×</span>
+        <input type="number" id="custom-h" min="1" max="30" step="0.1" value="4" placeholder="Cao">
+        <span>cm</span>
+      </div>
+      <p class="hint">Thông dụng: 3×4 cm cho hồ sơ, thẻ BHYT; 4×6 cm cho một số thủ tục khác.</p>
+
+      <label class="field-label">Độ phân giải in (DPI)</label>
+      <div class="dpi-row">
+        <input type="number" id="dpi-input" value="300" min="72" max="600" step="1">
+      </div>
+      <p class="hint">Mặc định 300 DPI (độ phân giải chuẩn cho ảnh in).</p>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btn-create">⚙️ Tạo khung &amp; xem trước</button>
+        <button class="btn btn-secondary" id="btn-reset">🔁 Làm lại</button>
+      </div>
+
+      <div id="controls-section" style="display:none; margin-top:16px;">
+        <label class="field-label">Phóng to / thu nhỏ (%)</label>
+        <div class="zoom-row">
+          <input type="range" id="zoom-slider" min="10" max="300" value="100">
+          <span id="zoom-val">100%</span>
+        </div>
+        <p class="hint">Kéo thanh trượt để điều chỉnh khuôn mặt vừa với khung ảnh (không cắt mất đỉnh đầu/cằm).</p>
+
+        <label class="field-label">Tên file khi lưu (không cần gõ .jpg)</label>
+        <input type="text" id="filename-input" placeholder="vd: anh_the_3x4_NguyenVanA">
+        <p class="hint">Nếu để trống, hệ thống sẽ tự đặt tên theo kích thước và DPI.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT / STEP 2 + 3 -->
+  <div class="col-right">
+    <div class="card">
+      <div class="card-title"><span class="step-num">2</span> Xem trước &amp; tải ảnh</div>
+
+      <div class="preview-area" id="preview-area">
+        <canvas id="preview-canvas" style="display:none;"></canvas>
+        <div class="preview-placeholder" id="preview-placeholder">
+          📷 Chưa có ảnh<br>
+          <small>Tải ảnh lên và nhấn "Tạo khung &amp; xem trước"</small>
+        </div>
+      </div>
+      <p class="preview-tip">💡 Nhấn giữ và kéo trên ảnh để dịch chuyển khuôn mặt. Dùng 2 ngón tay để zoom trên mobile.</p>
+
+      <div class="btn-row">
+        <button class="btn btn-green" id="btn-download" disabled>⬇️ Tải ảnh JPG đã căn chỉnh</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="card-title"><span class="step-num">3</span> Tạo trang in nhiều ảnh</div>
+
+      <label class="field-label">Chọn khổ giấy in</label>
+      <div class="radio-group" id="paper-group">
+        <label class="radio-label" id="lbl-a4">
+          <input type="radio" name="paper" value="a4"> A4 (21 × 29,7 cm)
+        </label>
+        <label class="radio-label selected" id="lbl-10x15">
+          <input type="radio" name="paper" value="10x15" checked> 10 × 15 cm
+        </label>
+      </div>
+      <p class="hint" style="margin-top:8px;">Hệ thống sẽ nhân bản ảnh thẻ hiện tại và giàn đều trên một trang JPEG đúng kích thước, sẵn sàng để in.</p>
+
+      <div class="btn-row">
+        <button class="btn btn-orange" id="btn-print" disabled>🖨️ Tải trang in (JPEG)</button>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box blue">
+        <h4>📋 Hướng dẫn nhanh</h4>
+        <ul>
+          <li>Chọn ảnh chụp rõ nét, chính diện, nền rõ ràng.</li>
+          <li>Chọn kích thước 3×4 hoặc 4×6 cm theo yêu cầu.</li>
+          <li>Bấm <strong>"Tạo khung &amp; xem trước"</strong>, kéo ảnh để căn chỉnh.</li>
+          <li>Đặt tên file dễ nhận biết (tên, loại giấy tờ...).</li>
+          <li>Nhấn tải ảnh hoặc tạo trang in để mang đi in.</li>
+        </ul>
+      </div>
+      <div class="info-box orange">
+        <h4>⚠️ Lưu ý sử dụng nội bộ</h4>
+        <ul>
+          <li>Công cụ phục vụ hỗ trợ thực hiện các thủ tục liên quan đến giấy khám sức khỏe, cấp đổi Giấy phép lái xe, dịch vụ công, khám chữa bệnh,...</li>
+          <li>Không chỉnh sửa làm thay đổi nhận dạng khuôn mặt.</li>
+          <li>Chỉ dùng tham khảo cho cá nhân.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══════════  FOOTER  ══════════ -->
+<footer>
+  <div class="footer-logo">
+    <div class="logo-circle">Chanh<br>.me</div>
+    <div>
+      <strong style="font-size:13px;">Cắt ảnh</strong><br>
+      <span style="font-size:11.5px;color:#5a6a85;">Công cụ cho người dùng cắt ảnh thẻ đúng chuẩn để thực hiện các thủ tục liên quan đến giấy khám sức khỏe, cấp đổi Giấy phép lái xe, dịch vụ công, khám chữa bệnh,...</span>
+    </div>
+  </div>
+  <p>Chỉ tham khảo sử dụng cho cá nhân · Không thay thế quy định chụp ảnh thẻ chuyên dụng của cơ quan chức năng.</p>
+  <p class="counter">👥 Đã có <span id="count-num">0</span> lượt tạo ảnh.</p>
+</footer>
+
+<!-- Scroll-to-top -->
+<button id="scroll-top" title="Lên đầu trang" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div id="loading-overlay"><div class="spinner"></div></div>
+<div id="toast"></div>
+
+<!-- ══════════  JAVASCRIPT  ══════════ -->
+<script>
+'use strict';
+
+// ─── STATE ───
+const state = {
+  imgObj: null,
+  offsetX: 0, offsetY: 0,
+  zoom: 100,
+  isDragging: false,
+  dragStartX: 0, dragStartY: 0,
+  lastOffsetX: 0, lastOffsetY: 0,
+  pinchStartDist: 0, pinchStartZoom: 0,
+  frameW_cm: 3, frameH_cm: 4,
+  dpi: 300,
+  rendered: false
+};
+
+// ─── DOM ───
+const fileInput   = document.getElementById('file-input');
+const fileNameEl  = document.getElementById('file-name');
+const dpiInput    = document.getElementById('dpi-input');
+const zoomSlider  = document.getElementById('zoom-slider');
+const zoomVal     = document.getElementById('zoom-val');
+const filenameIn  = document.getElementById('filename-input');
+const canvas      = document.getElementById('preview-canvas');
+const ctx         = canvas.getContext('2d');
+const previewArea = document.getElementById('preview-area');
+const placeholder = document.getElementById('preview-placeholder');
+const btnCreate   = document.getElementById('btn-create');
+const btnReset    = document.getElementById('btn-reset');
+const btnDownload = document.getElementById('btn-download');
+const btnPrint    = document.getElementById('btn-print');
+const controls    = document.getElementById('controls-section');
+const customRow   = document.getElementById('custom-row');
+const customW     = document.getElementById('custom-w');
+const customH     = document.getElementById('custom-h');
+const overlay     = document.getElementById('loading-overlay');
+const toastEl     = document.getElementById('toast');
+const fileDrop    = document.getElementById('file-drop');
+const scrollTopBtn= document.getElementById('scroll-top');
+
+// ─── COUNTER ───
+let count = parseInt(localStorage.getItem('anh_the_count') || '112');
+document.getElementById('count-num').textContent = count;
+function incCount() {
+  count++;
+  localStorage.setItem('anh_the_count', count);
+  document.getElementById('count-num').textContent = count;
+}
+
+// ─── TOAST ───
+let toastTimer;
+function showToast(msg, dur = 2600) {
+  clearTimeout(toastTimer);
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), dur);
+}
+
+// ─── SCROLL TOP ───
+window.addEventListener('scroll', () => {
+  scrollTopBtn.classList.toggle('show', window.scrollY > 300);
+}, { passive: true });
+
+// ─── LOAD IMAGE ───
+function loadImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  fileNameEl.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => { state.imgObj = img; showToast('✅ Đã tải ảnh thành công!'); };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+fileInput.addEventListener('change', e => loadImageFile(e.target.files[0]));
+fileDrop.addEventListener('dragover',  e => { e.preventDefault(); fileDrop.style.background = '#c8e6fb'; });
+fileDrop.addEventListener('dragleave', ()  => { fileDrop.style.background = ''; });
+fileDrop.addEventListener('drop', e => {
+  e.preventDefault(); fileDrop.style.background = '';
+  loadImageFile(e.dataTransfer.files[0]);
+});
+
+// ─── RADIO HELPERS ───
+document.querySelectorAll('input[name="size"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.querySelectorAll('#size-group .radio-label').forEach(l => l.classList.remove('selected'));
+    r.closest('.radio-label').classList.add('selected');
+    customRow.style.display = r.value === 'custom' ? 'flex' : 'none';
+  });
+});
+document.querySelectorAll('input[name="paper"]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.querySelectorAll('#paper-group .radio-label').forEach(l => l.classList.remove('selected'));
+    r.closest('.radio-label').classList.add('selected');
+  });
+});
+
+// ─── ZOOM SLIDER ───
+zoomSlider.addEventListener('input', () => {
+  state.zoom = parseInt(zoomSlider.value);
+  zoomVal.textContent = state.zoom + '%';
+  if (state.rendered) drawPreview();
+});
+
+// ─── GET SIZE ───
+function getSize() {
+  const v = document.querySelector('input[name="size"]:checked').value;
+  if (v === '3x4') return { w: 3, h: 4 };
+  if (v === '4x6') return { w: 4, h: 6 };
+  return { w: parseFloat(customW.value) || 3, h: parseFloat(customH.value) || 4 };
+}
+
+// ─── CREATE FRAME ───
+btnCreate.addEventListener('click', () => {
+  if (!state.imgObj) { showToast('⚠️ Vui lòng chọn ảnh trước!'); return; }
+
+  const dpi = parseInt(dpiInput.value) || 300;
+  state.dpi = dpi;
+  const sz  = getSize();
+  state.frameW_cm = sz.w; state.frameH_cm = sz.h;
+
+  const pxW = Math.round(sz.w / 2.54 * dpi);
+  const pxH = Math.round(sz.h / 2.54 * dpi);
+  canvas.width = pxW; canvas.height = pxH;
+
+  const imgA   = state.imgObj.width  / state.imgObj.height;
+  const frameA = pxW / pxH;
+  const initZ  = imgA > frameA
+    ? (pxH / state.imgObj.height) * 100
+    : (pxW / state.imgObj.width)  * 100;
+
+  state.zoom = Math.round(initZ);
+  zoomSlider.value = Math.min(300, Math.max(10, state.zoom));
+  zoomVal.textContent = state.zoom + '%';
+
+  state.offsetX = (pxW - state.imgObj.width  * state.zoom / 100) / 2;
+  state.offsetY = (pxH - state.imgObj.height * state.zoom / 100) / 2;
+
+  state.rendered = true;
+  drawPreview();
+
+  placeholder.style.display = 'none';
+  canvas.style.display = 'block';
+  controls.style.display = 'block';
+  btnDownload.disabled = false;
+  btnPrint.disabled    = false;
+  incCount();
+  showToast('✅ Đã tạo khung! Kéo ảnh để căn chỉnh.');
+
+  // Auto-scroll to preview on mobile/tablet
+  if (window.innerWidth <= 900) {
+    setTimeout(() => previewArea.scrollIntoView({ behavior: 'smooth', block: 'start' }), 220);
+  }
+});
+
+// ─── DRAW ───
+function drawPreview() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(
+    state.imgObj,
+    state.offsetX, state.offsetY,
+    state.imgObj.width  * state.zoom / 100,
+    state.imgObj.height * state.zoom / 100
+  );
+  ctx.strokeStyle = '#1976d2';
+  ctx.lineWidth   = Math.max(1, canvas.width / 150);
+  ctx.strokeRect(0, 0, canvas.width, canvas.height);
+}
+
+// ─── CANVAS SCALE HELPER ───
+function canvasScale() {
+  return canvas.width / (canvas.offsetWidth || canvas.width);
+}
+
+// ─── MOUSE DRAG ───
+previewArea.addEventListener('mousedown', e => {
+  if (!state.rendered || e.button !== 0) return;
+  state.isDragging  = true;
+  state.dragStartX  = e.clientX; state.dragStartY = e.clientY;
+  state.lastOffsetX = state.offsetX; state.lastOffsetY = state.offsetY;
+  previewArea.classList.add('active');
+  e.preventDefault();
+});
+window.addEventListener('mousemove', e => {
+  if (!state.isDragging) return;
+  const s = canvasScale();
+  state.offsetX = state.lastOffsetX + (e.clientX - state.dragStartX) * s;
+  state.offsetY = state.lastOffsetY + (e.clientY - state.dragStartY) * s;
+  drawPreview();
+});
+window.addEventListener('mouseup', () => {
+  state.isDragging = false;
+  previewArea.classList.remove('active');
+});
+
+// ─── TOUCH DRAG + PINCH ZOOM ───
+previewArea.addEventListener('touchstart', e => {
+  if (!state.rendered) return;
+  if (e.touches.length === 1) {
+    state.isDragging  = true;
+    state.dragStartX  = e.touches[0].clientX; state.dragStartY = e.touches[0].clientY;
+    state.lastOffsetX = state.offsetX; state.lastOffsetY = state.offsetY;
+  } else if (e.touches.length === 2) {
+    state.isDragging = false;
+    state.pinchStartDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    state.pinchStartZoom = state.zoom;
+  }
+  e.preventDefault();
+}, { passive: false });
+
+window.addEventListener('touchmove', e => {
+  if (!state.rendered) return;
+  if (e.touches.length === 1 && state.isDragging) {
+    const s = canvasScale();
+    state.offsetX = state.lastOffsetX + (e.touches[0].clientX - state.dragStartX) * s;
+    state.offsetY = state.lastOffsetY + (e.touches[0].clientY - state.dragStartY) * s;
+    drawPreview();
+  } else if (e.touches.length === 2) {
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    state.zoom = Math.min(300, Math.max(10, Math.round(state.pinchStartZoom * dist / state.pinchStartDist)));
+    zoomSlider.value = state.zoom;
+    zoomVal.textContent = state.zoom + '%';
+    drawPreview();
+  }
+}, { passive: true });
+
+window.addEventListener('touchend', () => { state.isDragging = false; });
+
+// ─── RESET ───
+btnReset.addEventListener('click', () => {
+  fileInput.value = ''; fileNameEl.textContent = 'Chưa chọn file';
+  state.imgObj = null; state.rendered = false;
+  canvas.style.display = 'none'; placeholder.style.display = '';
+  controls.style.display = 'none';
+  btnDownload.disabled = true; btnPrint.disabled = true;
+  state.zoom = 100; zoomSlider.value = 100; zoomVal.textContent = '100%';
+  filenameIn.value = '';
+  showToast('🔁 Đã làm lại!');
+});
+
+// ─── DOWNLOAD SINGLE ───
+btnDownload.addEventListener('click', () => {
+  if (!state.rendered) return;
+  overlay.classList.add('show');
+  setTimeout(() => {
+    const sz    = getSize();
+    const fname = filenameIn.value.trim() || `anh_the_${sz.w}x${sz.h}_${state.dpi}dpi`;
+    const a = document.createElement('a');
+    a.download = fname + '.jpg';
+    a.href     = canvas.toDataURL('image/jpeg', 0.97);
+    a.click();
+    overlay.classList.remove('show');
+    showToast('✅ Đã tải ảnh JPG!');
+  }, 300);
+});
+
+// ─── PRINT PAGE ───
+btnPrint.addEventListener('click', () => {
+  if (!state.rendered) return;
+  overlay.classList.add('show');
+  setTimeout(() => {
+    const paper = document.querySelector('input[name="paper"]:checked').value;
+    const [pgW_cm, pgH_cm] = paper === 'a4' ? [21, 29.7] : [10, 15];
+    const dpi  = state.dpi;
+    const mg   = Math.round(0.3 / 2.54 * dpi);
+    const gap  = Math.round(0.2 / 2.54 * dpi);
+    const pgW  = Math.round(pgW_cm / 2.54 * dpi);
+    const pgH  = Math.round(pgH_cm / 2.54 * dpi);
+    const fw   = canvas.width; const fh = canvas.height;
+    const cols = Math.max(1, Math.floor((pgW - 2 * mg + gap) / (fw + gap)));
+    const rows = Math.max(1, Math.floor((pgH - 2 * mg + gap) / (fh + gap)));
+
+    const pc   = document.createElement('canvas');
+    pc.width   = pgW; pc.height = pgH;
+    const pctx = pc.getContext('2d');
+    pctx.fillStyle = '#ffffff'; pctx.fillRect(0, 0, pgW, pgH);
+    for (let r = 0; r < rows; r++)
+      for (let c = 0; c < cols; c++)
+        pctx.drawImage(canvas, mg + c * (fw + gap), mg + r * (fh + gap), fw, fh);
+
+    const sz    = getSize();
+    const fname = filenameIn.value.trim() || `trang_in_${sz.w}x${sz.h}_${paper}_${dpi}dpi`;
+    const a     = document.createElement('a');
+    a.download  = fname + '.jpg';
+    a.href      = pc.toDataURL('image/jpeg', 0.97);
+    a.click();
+
+    overlay.classList.remove('show');
+    showToast(`✅ Trang in ${cols}×${rows} = ${cols * rows} ảnh đã được tải!`);
+    incCount();
+  }, 500);
+});
+</script>
+</body>
+</html>
